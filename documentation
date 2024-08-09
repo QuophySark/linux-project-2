@@ -1,0 +1,307 @@
+1.	Q1. Verify if the path “/opt/deployment/uat/host.conf” is correct.
+
+Ans; Incorret path and host.conf not found  
+
+2.	If incorrect, provide the correct path to the developers.
+
+Ans: 
+[root@localhost ~]# cd / && find -name host.conf
+
+3.	Create a file named ityourway_project.txt inside your home directory and add the sentence: ” This is group six  (6) project presentation and we are staying focused till the end of the February session “. 
+
+Ans;
+[root@localhost ~]#  vi ityourway_project.txt 
+
+4.	Determine the group ownership of the “ityourway_project.txt” file.
+
+Ans : verify ll and 
+Group:  root
+
+-rw-r--r--. 1 root root     112 Mar 27 23:45 ityourway_project.txt
+
+5.	Check the permissions of the “ityourway_project.txt” file for OTHERS (non-owner, non-group members).
+
+Ans ;  read permission only for other    
+
+-rw-r--r--. 1 root root     112 Mar 27 23:45 ityourway_project.txt
+
+6.	Change the permissions on the ityourway_project.txt file as follows:
+       Owner: Full permissions
+      Group: Read and write permissions
+      Others: No permissions
+
+Ans: 
+[root@localhost ~]# chmod 760 ityourway_project.txt
+r=4		owner=7
+w=2		group=6
+x=1		other =0
+[root@localhost ~]# ll to confirm
+
+-rwxrw----. 1 root root     112 Mar 27 23:45 ityourway_project.txt
+
+7.	Change the owner of the ityourway_project.txt file to the user vagrant”.
+
+Ans. 
+[root@localhost ~] # chown vagrant ityourway_project.txt 
+		or
+[root@localhost ~]# chgrp vagrant (file name)
+
+-rwxrw----. 1 vagrant root     112 Mar 27 23:45 ityourway_project.txt
+
+8.	There is a directory in the root directory called “opt”. In the opt directory, create another directory called “links.”
+
+Ans. 
+[root@localhost ~] # cd /opt && mkdir links.
+
+9.	  In the “links” directory:
+
+- create a softlink for ityourway_project.txt and place it here in the “links” directory. You can call this new softlink file” ityourway_project_softlink.txt “
+
+Ans. 
+Since there is no ityourway_project.txt file in the links directory, copy it into the links then create the softlink.
+Therefore, at links.
+
+[root@localhost ~]# cp /root/ityourway_project.txt /opt/links/ && ln -s ityourway_project.txt ityourway_project_softlink.txt
+				or
+[root@localhost ~]# ln -s /root/ityourway_project.txt /opt/links/ityourway_project_softlink.txt
+
+verify:
+[root@localhost ~]#  ll
+
+- create a hardlink for ityourway_project.txt and place it here in the “links” directory. You can call this new hardlink file ityourway_project_hardlink.txt.
+
+Ans. 
+[root@localhost ~]# ln ityourway_project.txt  ityourway_project_hardlink.txt
+verify;
+[root@localhost ~]#  ll  
+
+	check the inode number to verify the identification number.
+		[root@localhost ~]#  ls -i or ls -li or ls -il
+
+10.	What can you say about the inode numbers of the original file (ityourway_project.txt) compared to the inode numbers of the link files (ityour_project_softlink.txt and ityour_project_hardlink.txt).
+
+Ans;
+The inode number of the ityourway_project.txt file and ityourway_project_hardlink.txt are the same. But the inode number of the ityourway_project_softlink.txt file is different.
+
+check the inode number to verify the identification number.
+		 ls -i or ls -li or ls -il
+
+
+11.	In the “passwd “file, Use the awk and grep command to print out ONLY the username of the root user on the server.
+
+Ans; 
+[root@localhost ~]# awk -F ":" '{print $1}' /etc/passwd | grep root FOR ONLY ONE USERNAME
+ 
+NB: [root@localhost ~]# awk -F: '{ print$1 }' /etc/passwd         FOR ALL USERNAME
+		
+12. Assuming there is a group on the server called “pig-team-3”, use the “echo” command or the “sed” command to either ADD two (2) lines or INSERT two (2) lines into the “sudoers” file.
+ - One line must give the group: ipg-team-3 permissions to run sudo commands
+ - The other line must give the group: ipg-team-3 permissions to run sudo commands with No password.
+
+Ans 
+[root@localhost ~]# find / -name sudoers
+[root@localhost ~]# vi /etc/sudoers and edit the file by inputting the group name 
+		or 
+use the sed command to insert the group name for all the commands.
+
+First, 
+“set nu” to number all the lines using vi /etc/sudoers 
+
+for line 1
+[root@localhost ~]# sed -i '108i %ipg-team-3  ALL=(ALL)       ALL'  /etc/sudoers
+	for line 2
+	[root@localhost ~]# sed -i '111i %wheel        ALL=(ALL)       NOPASSWD: ALL' /etc/sudoers
+			or 
+use the echo command
+
+echo "ipg-teams-3        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
+echo '111e %wheel        ALL=(ALL)       NOPASSWD: ALL' >> /etc/sudoers
+echo '111e %wheel        ALL=(ALL)       NOPASSWD: ALL' >> /etc/sudoers
+
+
+TASK 2
+...
+Q1. . The user will be added to a group called “cloudevops“, check on the system if this group exists. If it does not, please create this group with a group id of “1521“.
+
+ANS;
+Search for a group by using the command find.
+[root@localhost ~]# find / -name group 
+[root@localhost ~]# /etc/group
+[root@localhost ~]# cat /etc/group
+
+OR
+[root@localhost ~]# awk -F: '{print $1}' /etc/group
+group cloudevops does not exist.
+
+CREATE A GROUP CALLED CLOUDEVOPS
+
+[root@localhost ~]# groupadd cloudevops -g 1521
+verify. 
+[root@localhost ~]# cat etc/group 
+postfix:x:89:
+chrony:x:995:
+vagrant:x:1000:vagrant
+cloudevops:x:1512:
+or 
+[root@localhost ~]# cat /etc/group | grep cloudevops
+cloudevops:x:1512:
+
+or 
+
+SEARCH FOR GROUP FILE, READ AND CHECK IF THE FILE DOESN'T EXIST, CREATE IT,
+[root@localhost ~]#  cat /etc/group | grep cloudevops && echo "group exit" || echo "group does not exit" && groupadd cloudevops 
+does not exist
+[root@localhost ~]# cat /etc/group
+postdrop:x:90:
+postfix:x:89:
+chrony:x:995:
+vagrant:x:1000:vagrant
+cloudevops:x:1512:
+
+Q2. Create the new user to have a username = “dtrump”, full name = “Dennis Trump”, shell = /bin/bash, and add the user to the newly created “cloudevops” group.
+
+Ans, 
+Create the user. 
+[root@localhost ~]# useradd dtrump 
+[root@localhost ~]# cat /etc/passwd
+dtrump:x:1001:1001::/home/dtrump:/bin/bash
+modify the full name. 
+[root@localhost ~]# usermod -c "Dennis trump" dtrump
+[root@localhost ~]# cat /etc/passwd
+dtrump:x:1001:1001:Dennis trump:/home/dtrump:/bin/bash
+modify the shell.
+[root@localhost ~]# usermod -s " /bin/shell" dtrump
+[root@localhost ~]# cat /etc/passwd
+dtrump:x:1001:1001:Dennis trump:/home/dtrump:/bin/bash/
+
+Or use only one command to create and add the shell and id 
+[root@localhost ~]#  useradd dtrump -c 'Dennis Trump' -s /bin/bash -g 1521
+[root@localhost ~]# cat /etc/passwd
+dtrump:x:1001:1521:Dennis Trump:/home/dtrump:/bin/bash
+
+and add the user to the newly created “cloudevops” group.
+[root@localhost ~]# usermod -a -G cloudevops dtrump
+[root@localhost ~]# id dtrump
+uid=1001(dtrump) gid=1001(dtrump) groups=1001(dtrump),1512(cloudevops)
+
+Q3.  Since the “cloudevops” group was newly created, all members in this group may not be able to run sudo commands, Give sudo privileges to all members of the “cloudevops” group.
+
+Ans;
+[root@localhost ~]# vi /etc/sudoers
+set numbers on all the lines then edit or use the sudo command to add groupname to run all commands. 
+set nu 
+[root@localhost ~]# sed -i '108i cloudevops ALL=(ALL)       ALL'  /etc/sudoers
+Or
+vi into the sudoers file and edit it.
+## Allows people in group wheel to run all commands
+%wheel  ALL=(ALL)       ALL
+%ipg-team-3  ALL=(ALL)       ALL
+%cloudevops ALL=(ALL)       ALL
+:wq!
+
+Q4. Also, Allow members of the newly created group to be able to run the sudo command without a password - NO PASSWORD.
+
+Ans;
+[root@localhost ~]# sed -i ' 114i cloudevops  ALL=(ALL)       ALL'  /etc/sudoers
+Or
+[root@localhost ~]# vi /etc/sudoers
+ 
+## Same thing without a password
+# %wheel        ALL=(ALL)       NOPASSWD: ALL
+%ipg-team-3        ALL=(ALL)       NOPASSWD: ALL
+%cloudevops        ALL=(ALL)       NOPASSWD: ALL
+:wq!
+
+Q5. Once these privileges have been given to the “cloudevops” group, SWITCH to the new user and run the below commands:
+
+i. command 1 = whoami (To show the username )
+[root@localhost ~]# su dtrump
+[dtrump@localhost root]$ whoami
+dtrump
+
+ii. command 2 = id (This will display the id of the user and give us a bit more information about the user.)
+[dtrump@localhost root]$ id
+uid=1001(dtrump) gid=1001(dtrump) groups=1001(dtrump),1521(cloudevops) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+
+iii. command 3 = sudo -l (This command will display the allowed (and forbidden) commands for the user )
+[dtrump@localhost root]$ sudo -l
+uid=1003(prince) gid=2131(rose) groups=2131(rose) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[dtrump@localhost root]$ sudo -l
+
+Matching Defaults entries for andy on localhost:
+    !visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE",
+    env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY",
+    secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin
+
+User andy may run the following commands on localhost:
+    (ALL) ALL
+    (ALL) NOPASSWD: ALL
+[dtrump@localhost root]$
+
+Task 3. 
+Automation setup
+As a Linux Systems Administrator, you've frequently onboarded new DevOps/Cloud engineers into the company manually ( As seen in TASK 2 ). To streamline this process and ensure consistency, you have decided to automate the setup process using a shell script. Your goal is to create a script that can handle user and group creation, assign sudo privileges, and perform necessary configurations for new employees.
+
+Here's what the script should accomplish and some clues to follow :
+
+1. Check if the “group_name” group exists. If not, create it with a group ID of “group_id”.
+2. Create a new user named “username” with full_name, assigned to the “group_name” group, and with a shell as “shell”.
+3. Grant sudo privileges to the “group_name” group by configuring the sudoers file.
+4. Allow members of the “group_name” group to run sudo commands without a password prompt.( Check sudoers file for how this is done )
+5. Switch to the new user “username” and perform the following commands:
+- whoami : (This will display the username ).
+- id : (This will display additional user information ).
+- sudo -l : ( This will display the allowed (and forbidden) commands for the user ).
+
+Ans;
+vi user-setup.sh
+
+#!/bin/bash
+
+# Interactive Inputs
+
+read -p "Enter group name: "group_name
+read -p "Enter froup ID: "group_id
+read -p "Enter username: "username
+read -p "Enter full name: "full_name
+read -p "Enter shell: "shell
+
+# Check if group exists
+if grep -q "$group_name:" /etc/group; then
+   echo "Group $group_name already exists."
+
+else
+   # Create group if it doesnt exist
+   echo "Creating group $group_name with GID $group_id"
+   sudo groupadd -g "$group_id" "group_name"
+
+fi
+   # Check if user exists
+   if id "username" &>/dev/null; then
+   echo "User $username already exist."
+
+else
+   # Create user if it doesn't exist
+   echo "Creating user $username"
+   sudo useradd -m -s "$shell" -g "$group_name" -c "$full_name" "$username"
+
+fi
+
+# Display username
+  echo "Current user: $(whoami)"
+
+# Display additional user information
+  echo "Additional user information:"
+  id "$username"
+
+# Display allowed (and forbidden) commands for the user
+  echo "Allowed (and forbidden) commands for the user:"
+  sudo -l
+
+  :wq!    
+
+On the terminal
+[root@localhost ~]# touch group6.sh
+[root@localhost ~]# chmod +x group6.sh
+[root@localhost ~]# vi group6.sh
+#
