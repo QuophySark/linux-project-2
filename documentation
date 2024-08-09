@@ -300,8 +300,4 @@ fi
 
   :wq!    
 
-On the terminal
-[root@localhost ~]# touch group6.sh
-[root@localhost ~]# chmod +x group6.sh
-[root@localhost ~]# vi group6.sh
-#
+
